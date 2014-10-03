@@ -1,7 +1,7 @@
 # Edit this Gemfile to bundle your application's dependencies.
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.1.5'
+gem 'rails', '~> 4.2.0.beta2'
 
 # Get the absolute path of this Gemfile so the includes below still work
 # when the current directory for a bundler command isn't the application's
@@ -26,39 +26,39 @@ end
 
 # Gems used only for assets and not required
 # in production environments by default.
-gem 'sass-rails'
-gem 'sprockets', '2.11.0'
-gem 'therubyracer', :platforms => :ruby
-gem 'execjs'
-gem 'uglifier'
+gem 'sass-rails', '~> 5.0.0.beta1'
+gem 'sprockets', '~> 2.12.0'
+gem 'therubyracer', '~> 0.12.1', :platforms => :ruby
+gem 'execjs', '~> 2.2.0'
+gem 'uglifier', '~> 2.5.0'
 
-gem 'jquery-rails'
-gem 'turbolinks'
-gem 'jquery-timepicker-rails'
-gem 'bootstrap-datepicker-rails'
-gem 'twitter-bootstrap-rails-confirm'
+gem 'jquery-rails', '~> 3.1.0'
+gem 'turbolinks', '~> 2.2.2'
+gem 'jquery-timepicker-rails', '~> 1.3.8.1'
+gem 'bootstrap-datepicker-rails', '~> 1.3.0.2'
+gem 'twitter-bootstrap-rails-confirm', '~> 1.0.3'
 
 #RMagick is used for image resizing and processing
-gem 'rmagick', :require => 'RMagick', :platforms => :ruby
+gem 'rmagick', '~> 2.13.3', :require => 'RMagick', :platforms => :ruby
 
 # Attachable does all the file work.
-gem 'attachable'
+gem 'attachable', '~> 0.0.5'
 
-gem 'devise', '~> 3.0.0'
-gem 'cancancan'
+gem 'devise', git: ''
+gem 'cancancan', '~> 1.9.2'
 
-gem 'json'
+gem 'json', '~> 1.8.1'
 gem "rubyzip", '< 1.0.0'
 
 # Process jobs in the background
-gem 'foreman', :group => :development
-gem 'delayed_job_active_record'
-gem 'clockwork'
+gem 'foreman', '~> 0.71.0', :group => :development
+gem 'delayed_job_active_record', '~> 4.0.1'
+gem 'clockwork', '~> 0.7.5'
 
 # Test Coverage
-gem 'simplecov', :require => false, :group => :test
+gem 'simplecov', '~> 0.8.2', :require => false, :group => :test
 
-gem 'kaminari'
+gem 'kaminari', '~> 0.16.1'
 
 require "#{Dir.getwd}/lib/command_check.rb"
 if system_has_mysql?
@@ -75,14 +75,14 @@ end
 # In production we prefer MySQL over sqlite3.  If you are only
 # interested in development and don't want to bother with production,
 # run `bundle install --without production` to ignore MySQL.
-gem 'sqlite3', :group => [:development, :test]
+gem 'sqlite3', '~> 1.3.9', :group => [:development, :test]
 
 gem 'mysql2', :require => false, :group => :production, :platforms => mysql_platforms
 gem 'pg', :require => false, :group => :production, :platforms => postgres_platforms
 
-gem 'public_activity'
+gem 'public_activity', '~> 1.4.1'
 
-gem 'redcarpet'
+gem 'redcarpet', '~> 3.1.2'
 gem 'concerto_docsplit'
 
 # NProgress provides progress bars for pages loaded via Turbolinks
