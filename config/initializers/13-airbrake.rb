@@ -9,13 +9,12 @@ if ActiveRecord::Base.connection.table_exists? 'concerto_configs'
   if defined?(Airbrake)
     Airbrake.configure do |config|
       def config.api_key
-        if ConcertoConfig[:send_errors] == true
+        if ConcertoConfig[:send_errors]
           return '34e36775df3e89293c59efeba36f6c8f'
-        else 
+        else
           return nil
         end
       end
-      #config.async = (RUBY_VERSION.to_f > 1.8)
       config.user_attributes = []
       config.host = 'errors.concerto-signage.org'
       config.port = 80
