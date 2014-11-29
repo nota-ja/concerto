@@ -60,6 +60,9 @@ gem 'simplecov', '~> 0.8.2', :require => false, :group => :test
 
 gem 'kaminari', '~> 0.16.1'
 
+# Gem Auditing
+gem 'bundler-audit', :require => false, :group => :test
+
 require "#{Dir.getwd}/lib/command_check.rb"
 if system_has_mysql?
   mysql_platforms = Bundler::Dependency::PLATFORM_MAP.keys
@@ -82,10 +85,11 @@ gem 'pg', :require => false, :group => :production, :platforms => postgres_platf
 
 gem 'public_activity', '~> 1.4.1'
 
-gem 'redcarpet', '~> 3.1.2'
+gem 'redcarpet', '~> 3.2.0'
 gem 'concerto_docsplit'
 
 # NProgress provides progress bars for pages loaded via Turbolinks
-gem 'nprogress-rails', '~> 0.1.3.0'
+gem 'nprogress-rails', '~> 0.1.6.3'
+gem 'google-analytics-turbolinks', '~> 0.0.4'
 
 gem 'i18n-tasks', '~> 0.4.5', :group => :development
