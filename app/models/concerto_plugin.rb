@@ -118,7 +118,7 @@ class ConcertoPlugin < ActiveRecord::Base
           result += "\n"
         end
       else
-        logger.warn("ConcertoPlugin: Failed to check view hooks for #{plugin.name}")
+        logger.debug("ConcertoPlugin: Failed to check view hooks for #{plugin.name}")
       end
     end
     return result.html_safe
