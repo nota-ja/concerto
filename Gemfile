@@ -1,7 +1,7 @@
 # Edit this Gemfile to bundle your application's dependencies.
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.2.0.rc3'
+gem 'rails', '~> 4.2.0'
 
 # Get the absolute path of this Gemfile so the includes below still work
 # when the current directory for a bundler command isn't the application's
@@ -48,7 +48,7 @@ gem 'devise', git: 'https://github.com/plataformatec/devise.git', branch: 'lm-ra
 gem 'cancancan', '~> 1.9.2'
 
 gem 'json', '~> 1.8.1'
-gem "rubyzip", '< 1.0.0'
+gem 'rubyzip'
 
 # Process jobs in the background
 gem 'foreman', '~> 0.71.0', :group => :development
