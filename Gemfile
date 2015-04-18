@@ -39,7 +39,7 @@ gem 'bootstrap-datepicker-rails', '~> 1.4.0'
 gem 'twitter-bootstrap-rails-confirm', '~> 1.0.4'
 
 #RMagick is used for image resizing and processing
-gem 'rmagick', '~> 2.14.0', :require => 'RMagick', :platforms => :ruby
+gem 'rmagick', '~> 2.14.0', :require => 'rmagick', :platforms => :ruby
 
 # Attachable does all the file work.
 gem 'attachable', '~> 0.0.5'
