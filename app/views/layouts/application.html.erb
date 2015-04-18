@@ -10,22 +10,26 @@
   <%= stylesheet_link_tag "application" %>
   <%= javascript_include_tag "application" %>
   <%= ConcertoPlugin.add_header_tags(self) %>
+  <script type="text/javascript">
+      I18n.defaultLocale = "<%= I18n.default_locale %>";
+      I18n.locale = "<%= I18n.locale %>";
+  </script>
   
   <%= csrf_meta_tag %>
-  <%= render :partial => 'elements/head' %>
+  <%= render partial: 'elements/head' %>
 
   <!--[if lt IE 9]>
 	<%= javascript_include_tag "html5_shiv/html5.js" %>
 	<![endif]-->
 </head>
 <body>
-<%= render :partial => "elements/topmenu_contents" %>
-<%= render :partial => "elements/render_flash" %>
+<%= render partial: "elements/topmenu_contents" %>
+<%= render partial: "elements/render_flash" %>
 
 <div id="main" class="container-fluid">
   <%= yield %>
 </div>
-<%= render :partial => "layouts/footer" %>
-<%= render :partial => "layouts/analytics" %>
+<%= render partial: "layouts/footer" %>
+<%= render partial: "layouts/analytics" %>
 </body>
 </html>

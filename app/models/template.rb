@@ -7,17 +7,17 @@ class Template < ActiveRecord::Base
   define_callbacks :screen_dependencies
   ConcertoPlugin.install_callbacks(self) # Get the callbacks from plugins
 
-  has_many :screens, :dependent => :restrict_with_exception
-  has_many :media, :as => :attachable, :dependent => :destroy
-  has_many :positions, -> { order(:id) }, :dependent => :destroy
+  has_many :screens, dependent: :restrict_with_exception
+  has_many :media, as: :attachable, dependent: :destroy
+  has_many :positions, -> { order(:id) }, dependent: :destroy
 
   accepts_nested_attributes_for :media
-  accepts_nested_attributes_for :positions, :allow_destroy => true
+  accepts_nested_attributes_for :positions, allow_destroy: true
 
-  belongs_to :owner, :polymorphic => true
+  belongs_to :owner, polymorphic: true
 
   # Validations
-  validates :name, :presence => true, :uniqueness => true
+  validates :name, presence: true, uniqueness: true
 
   #Placeholder attributes
   attr_accessor :path, :css_path
@@ -75,11 +75,17 @@ class Template < ActiveRecord::Base
   # template, fields, and original media.  Return the largest update_at value.
   def last_modified
     timestamps = [updated_at]
-    latest_position = positions.order('updated_at DESC').first
+    latest_position = positions.reorder('updated_at DESC').first
     timestamps.append(latest_position.updated_at) unless latest_position.nil?
     latest_media = media.original.order('updated_at DESC').first
     timestamps.append(latest_media.updated_at) unless latest_media.nil?
     return timestamps.max
+  end
+
+  # for cachebusting
+  def last_modified_md5
+    require 'digest/md5'
+    Digest::MD5.hexdigest(last_modified.to_s)
   end
 
   # Generate a preview image of a template.
@@ -105,10 +111,10 @@ class Template < ActiveRecord::Base
           next
         end
 
-        dw = ConcertoImageMagick.draw_block(dw, :fill_color => "black", :stroke_opacity => 0, :fill_opacity => 0.6, :width => width, :height => height, :left => position.left, :right => position.right, :top => position.top, :bottom => position.bottom)
+        dw = ConcertoImageMagick.draw_block(dw, fill_color: "black", stroke_opacity: 0, fill_opacity: 0.6, width: width, height: height, left: position.left, right: position.right, top: position.top, bottom: position.bottom)
 
         if !hide_text
-          dw = ConcertoImageMagick.draw_text(dw,:stroke_color => "white", :fill_color => "white", :opacity => 1, :width => width, :height => height, :left => position.left, :right => position.right, :top => position.top, :bottom => position.bottom, :field_name => position.field.name)
+          dw = ConcertoImageMagick.draw_text(dw,stroke_color: "white", fill_color: "white", opacity: 1, width: width, height: height, left: position.left, right: position.right, top: position.top, bottom: position.bottom, field_name: position.field.name)
         end
       end
       ConcertoImageMagick.draw_image(dw,image)
@@ -158,14 +164,14 @@ class Template < ActiveRecord::Base
 
     begin
       if import_xml(xml_data)
-        self.media.build({:key=>"original", :file_name => image_file.name,
-                               :file_type => MIME::Types.type_for(image_file.name).first.content_type})
+        self.media.build({key:"original", file_name: image_file.name,
+                               file_type: MIME::Types.type_for(image_file.name).first.content_type})
         self.media.first.file_size = image_file.size
         self.media.first.file_data = image_file.get_input_stream.read
 
         if !css_file.nil?
-          m = self.media.build({:key=>"css", :file_name => css_file.name,
-                                 :file_type => MIME::Types.type_for(css_file.name).first.content_type})
+          m = self.media.build({key:"css", file_name: css_file.name,
+                                 file_type: MIME::Types.type_for(css_file.name).first.content_type})
           m.file_size = css_file.size
           m.file_data = css_file.get_input_stream.read
         end

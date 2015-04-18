@@ -2,7 +2,7 @@ class TemplatesController < ApplicationController
   define_callbacks :show # controller callback for 'show' action
   ConcertoPlugin.install_callbacks(self) # Get the callbacks from plugins
 
-  before_filter :get_type, :only => [:new, :create, :import]
+  before_filter :get_type, only: [:new, :create, :import]
   respond_to :html, :json, :xml, :js
 
   # GET /templates
@@ -22,7 +22,7 @@ class TemplatesController < ApplicationController
     run_callbacks :show # Run plugin hooks
     auth!
     respond_with(@template) do |format|
-      format.xml { render :xml => @template.to_xml(:include => [:positions])  }
+      format.xml { render xml: @template.to_xml(include: [:positions])  }
     end
   end
 
@@ -41,11 +41,7 @@ class TemplatesController < ApplicationController
   def edit
     @template = Template.find(params[:id])
     auth!
-    # make sure that we only have two html file inputs, one for the graphic ("original") and one for the stylesheet ("css")
-    @template.media.to_a.reject! {|m| true}
-    while @template.media.length < 2 do
-      @template.media.build
-    end
+    # the form contains two bogus fields used for file uploads -- :template_css, :template_image
   end
 
   # POST /templates
@@ -64,13 +60,13 @@ class TemplatesController < ApplicationController
 
     respond_to do |format|
       if @template.save
-        process_notification(@template, {}, process_notification_options({:params => {:template_name => @template.name}}))
-        format.html { redirect_to(edit_template_path(@template), :notice => t(:template_created)) }
-        format.xml  { render :xml => @template, :status => :created, :location => @template }
+        process_notification(@template, {}, process_notification_options({params: {template_name: @template.name}}))
+        format.html { redirect_to(edit_template_path(@template), notice: t(:template_created)) }
+        format.xml  { render xml: @template, status: :created, location: @template }
       else
         @type = "create"
         format.html { render :new }
-        format.xml  { render :xml => @template.errors, :status => :unprocessable_entity }
+        format.xml  { render xml: @template.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -81,26 +77,27 @@ class TemplatesController < ApplicationController
     @template = Template.find(params[:id])
     auth!
 
-    # get a copy of the params and remove the files as we process them
+    # get a copy of the params and remove the bogus file fields as we process them
     template_parameters = template_params
-    template_parameters[:media_attributes].each do |k, media|
-      if !media.empty?
+    # doens't matter which file is in which field because the file type is inspected for each
+    [:template_css, :template_image].each do |file|
+      if !template_parameters[file].nil?
         # for the files that were uploaded, determine their media key based on their extension
-        new_media = @template.media.build(media)
+        new_media = @template.media.build({file: template_parameters[file]})
         extension = (new_media.file_name.blank? ? nil : new_media.file_name.split('.')[-1].downcase)
         new_media.key = (extension == "css" ? "css" : "original") unless extension.nil?
 
         # mark any existing @template.media with this same key as replaced (obsolete)
         @template.media.each do |m|
-          m.key = 'replaced_' + m.key if m.key == new_media.key and m != new_media #!m.new_record?
+          m.key = 'replaced_' + m.key if m.key == new_media.key and m != new_media
         end
       end
-      # remove the html file from the attributes so it is not processed in the in the update_attributes below
-      template_parameters[:media_attributes].delete(k)
-    end unless template_parameters[:media_attributes].nil?
+      # remove the bogus file field from the collection so activemodel doesn't complain about it
+      template_parameters.delete(file)
+    end
 
     if @template.update_attributes(template_parameters)
-      process_notification(@template, {}, process_notification_options({:params => {:template_name => @template.name}}))
+      process_notification(@template, {}, process_notification_options({params: {template_name: @template.name}}))
       flash[:notice] = t(:template_updated)
     end
 
@@ -114,11 +111,11 @@ class TemplatesController < ApplicationController
     auth!
 
     unless @template.is_deletable?
-      redirect_to(@template, :notice => t(:cannot_delete_template, :screens => @template.screens.collect { |s| s.name if can? :read, s}.join(", ")))
+      redirect_to(@template, notice: t(:cannot_delete_template, screens: @template.screens.collect { |s| s.name if can? :read, s}.join(", ")))
       return
     end
 
-    process_notification(@template, {}, process_notification_options({:params => {:template_name => @template.name}}))
+    process_notification(@template, {}, process_notification_options({params: {template_name: @template.name}}))
     @template.destroy
     respond_with(@template)
   end
@@ -127,9 +124,9 @@ class TemplatesController < ApplicationController
   # Generate a preview of the template based on the request format.
   def preview
     @template = Template.find(params[:id])
-    auth!(:action => :preview)
+    auth!(action: :preview)
 
-    if stale?(:last_modified => @template.last_modified.utc, :etag => @template, :public => true)
+    if stale?(last_modified: @template.last_modified.utc, etag: @template, public: true)
       # Hide the fields if the hide_fields param is set,
       # show them by default though.
       @hide_fields = false
@@ -172,8 +169,8 @@ class TemplatesController < ApplicationController
         data = @image.to_blob
 
         send_data data,
-                  :filename => "#{@template.name.underscore}.#{@image.format.downcase}_preview",
-                  :type => @image.mime_type, :disposition => 'inline'
+                  filename: "#{@template.name.underscore}.#{@image.format.downcase}_preview",
+                  type: @image.mime_type, disposition: 'inline'
       else
         respond_to do |format|
           format.svg
@@ -194,7 +191,7 @@ class TemplatesController < ApplicationController
       # is_hidden checkbox supercedes xml
       @template.is_hidden = template_params[:is_hidden]
       if @template.save
-        process_notification(@template, {}, process_notification_options({:params => {:template_name => @template.name}}))
+        process_notification(@template, {}, process_notification_options({params: {template_name: @template.name}}))
         flash[:notice] = t(:template_created)
       end
     end
@@ -211,6 +208,7 @@ private
   end
 
   def template_params
-    params.require(:template).permit(:name, :author, :descriptor, :image, :is_hidden, :positions_attributes => [:field_id, :style, :top, :left, :bottom, :right, :id, :_destroy], :media_attributes => [:file])
+    # :template_css and :template_file are two bogus fields used for file uploads when editing a template
+    params.require(:template).permit(:name, :author, :descriptor, :image, :is_hidden, :template_css, :template_image, positions_attributes: [:field_id, :style, :top, :left, :bottom, :right, :id, :_destroy], media_attributes: [:file])
   end
 end

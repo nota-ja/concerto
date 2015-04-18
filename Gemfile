@@ -1,7 +1,7 @@
 # Edit this Gemfile to bundle your application's dependencies.
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.2.0'
+gem 'rails', '~> 4.2.1'
 
 # Get the absolute path of this Gemfile so the includes below still work
 # when the current directory for a bundler command isn't the application's
@@ -26,42 +26,42 @@ end
 
 # Gems used only for assets and not required
 # in production environments by default.
-gem 'sass-rails', '~> 5.0.0.beta1'
+gem 'sass-rails', '~> 5.0.3'
 gem 'sprockets', '~> 2.12.0'
 gem 'therubyracer', '~> 0.12.1', :platforms => :ruby
-gem 'execjs', '~> 2.2.0'
-gem 'uglifier', '~> 2.5.0'
+gem 'execjs', '~> 2.2.2'
+gem 'uglifier', '~> 2.7.1'
 
-gem 'jquery-rails', '~> 3.1.0'
-gem 'turbolinks', '~> 2.2.2'
-gem 'jquery-timepicker-rails', '~> 1.3.8.1'
-gem 'bootstrap-datepicker-rails', '~> 1.3.0.2'
-gem 'twitter-bootstrap-rails-confirm', '~> 1.0.3'
+gem 'jquery-rails', '~> 3.1.2'
+gem 'turbolinks', '~> 2.5.3'
+gem 'jquery-timepicker-rails', '~> 1.4.3'
+gem 'bootstrap-datepicker-rails', '~> 1.4.0'
+gem 'twitter-bootstrap-rails-confirm', '~> 1.0.4'
 
 #RMagick is used for image resizing and processing
-gem 'rmagick', '~> 2.13.3', :require => 'RMagick', :platforms => :ruby
+gem 'rmagick', '~> 2.14.0', :require => 'RMagick', :platforms => :ruby
 
 # Attachable does all the file work.
 gem 'attachable', '~> 0.0.5'
 
-gem 'devise', git: 'https://github.com/plataformatec/devise.git', branch: 'lm-rails-4-2'
-gem 'cancancan', '~> 1.9.2'
+gem 'devise', '~> 3.4.1'
+gem 'cancancan', '~> 1.10.1'
 
-gem 'json', '~> 1.8.1'
-gem 'rubyzip'
+gem 'json', '~> 1.8.2'
+gem 'rubyzip', '~> 1.1.7'
 
 # Process jobs in the background
-gem 'foreman', '~> 0.71.0', :group => :development
-gem 'delayed_job_active_record', '~> 4.0.1'
-gem 'clockwork', '~> 0.7.5'
+gem 'foreman', '~> 0.78.0', :group => :development
+gem 'delayed_job_active_record', '~> 4.0.3'
+gem 'clockwork', '~> 1.1.0'
 
 # Test Coverage
-gem 'simplecov', '~> 0.8.2', :require => false, :group => :test
+gem 'simplecov', '~> 0.9.2', :require => false, :group => :test
 
-gem 'kaminari', '~> 0.16.1'
+gem 'kaminari', '~> 0.16.3'
 
 # Gem Auditing
-gem 'bundler-audit', :require => false, :group => :test
+gem 'bundler-audit', '~> 0.3.1', :require => false, :group => :test
 
 require "#{Dir.getwd}/lib/command_check.rb"
 if system_has_mysql?
@@ -78,18 +78,25 @@ end
 # In production we prefer MySQL over sqlite3.  If you are only
 # interested in development and don't want to bother with production,
 # run `bundle install --without production` to ignore MySQL.
-gem 'sqlite3', '~> 1.3.9', :group => [:development, :test]
+gem 'sqlite3', '~> 1.3.10', :group => [:development, :test]
 
 gem 'mysql2', :require => false, :group => :production, :platforms => mysql_platforms
 gem 'pg', :require => false, :group => :production, :platforms => postgres_platforms
 
-gem 'public_activity', '~> 1.4.1'
+gem 'public_activity', '~> 1.4.2'
 
-gem 'redcarpet', '~> 3.2.0'
-gem 'concerto_docsplit'
+gem 'redcarpet', '~> 3.2.3'
+gem 'concerto_docsplit', '~> 0.7.5'
 
 # NProgress provides progress bars for pages loaded via Turbolinks
-gem 'nprogress-rails', '~> 0.1.6.3'
+gem 'nprogress-rails', '~> 0.1.6.6'
 gem 'google-analytics-turbolinks', '~> 0.0.4'
 
-gem 'i18n-tasks', '~> 0.4.5', :group => :development
+# I18n Tasks
+group :development do
+  gem 'i18n-tasks', '~> 0.7.13'
+  gem 'slop', '~> 3.6.0' # Required due to https://github.com/glebm/i18n-tasks/issues/118
+end
+
+gem 'i18n-js', '>= 3.0.0.rc8', '< 3.1.0'
+

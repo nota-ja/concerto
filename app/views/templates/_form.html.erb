@@ -1,28 +1,19 @@
-<%= form_for(template, :html => { :multipart => true }) do |f| %>
-  <% if template.errors.any? %>
-    <div class="alert alert-banner alert-error">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <h4><b><%= t :error, count: template.errors.count %> <%= t :prohibited_save, :model => ::Template.model_name.human.downcase %></b></h4>
-      <ul>
-        <% template.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<%# this form is only used for :edit %>
+<%= form_for(template, html: { multipart: true }) do |f| %>
+  <%= render partial: "layouts/errors", object: template %>
 
   <fieldset>
     <div class="clearfix">
       <%= f.label :name %>
       <div class="input">
-        <%= f.text_field :name, :autofocus => true, :class => "input-xlarge" %>
+        <%= f.text_field :name, autofocus: true, class: "input-xlarge" %>
       </div>
     </div>
 
     <div class="clearfix">
       <%= f.label :author %>
       <div class="input">
-        <%= f.text_field :author, :class => "input-xlarge" %>
+        <%= f.text_field :author, class: "input-xlarge" %>
       </div>
     </div>
 
@@ -39,10 +30,10 @@
            @groups = Group.order('name ASC')
            options = {}
            if !@users.empty?
-             options[User.model_name.human.pluralize] = @users.map { |u| [u.name, "User-#{u.id}"]}
+             options[User.model_name.human(count: 42)] = @users.map { |u| [u.name, "User-#{u.id}"]}
            end
            if !@groups.empty?
-             options[Group.model_name.human.pluralize] = @groups.map { |g| [g.name, "Group-#{g.id}"] }
+             options[Group.model_name.human(count: 42)] = @groups.map { |g| [g.name, "Group-#{g.id}"] }
            end
         %>
         <%= select_tag :owner, grouped_options_for_select(options, "#{template.owner_type}-#{template.owner_id}") %>
@@ -52,7 +43,7 @@
 
   <fieldset>
     <div class="clearfix">
-      <%= image_tag preview_template_path(@template, :width=> 400, :format => :jpg) %>
+      <%= image_tag preview_template_path(@template, lm: @template.last_modified_md5, width: 400, format: :jpg) %>
     </div>
   </fieldset>
 
@@ -60,16 +51,16 @@
     <div class="clearfix">
       <%= f.label :media %>
       <div class="input">
-        <%= f.fields_for :media do |media| %>
-          <%= media.file_field :file %>
-        <% end %>
+        <%= f.file_field :template_css %>
+        <%= f.file_field :template_image %>
       </div>
     </div>
   </fieldset>
 
 
   <fieldset>
-    <legend><span><%= Position.model_name.human.pluralize %></span></legend>
+    <legend><span><%= Position.model_name.human(count: 42) %></span>&nbsp; <%= link_to t(:manage_fields), Field, class: "btn" %></legend>
+
     <div class="template-positions">
       <div class="row-fluid">
         <div class="span2">
@@ -94,13 +85,13 @@
         </div>
       </div>
       <%= f.fields_for :positions do |p| %>
-        <% render 'position_fields', :p => p %>
+        <% render 'position_fields', p: p %>
       <% end %>
     </div>
-    <%= link_to_add_position_fields t(:add_model, :model => Position.model_name.human), f, :positions %>
+    <%= link_to_add_position_fields t(:add_model, model: Position.model_name.human), f, :positions %>
   </fieldset>
 
   <div class="submit_bar actions">
-    <%= f.submit button_text, :class => "btn btn-primary" %> <%= link_to t(:cancel), screens_path, :class => "btn" %>
+    <%= f.submit button_text, class: "btn btn-primary" %> <%= link_to t(:cancel), screens_path, class: "btn" %>
   </div>
 <% end %>

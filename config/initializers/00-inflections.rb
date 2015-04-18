@@ -15,3 +15,5 @@ end
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym 'RESTful'
 # end
+
+Rails.logger.debug "Completed #{File.basename(__FILE__)} at #{Time.now.to_s}"

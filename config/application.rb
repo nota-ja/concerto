@@ -3,9 +3,10 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 if defined?(Bundler)
-  # Require the gems listed in Gemfile, including any gems
-  # you've limited to :test, :development, or :production.
-  groups = {:assets => %w(development test production)}
+  # If you precompile assets before deploying to production, use this line
+  #Bundler.require(*Rails.groups(assets: %w(development test)))
+
+  groups = {assets: %w(development test production)}
   Bundler.require(:concerto_plugins,*Rails.groups(groups))
 
   # If you want your assets lazily compiled in production, use this line

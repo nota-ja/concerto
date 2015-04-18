@@ -1,4 +1,15 @@
 en:
+  manage_fields: 'Manage Fields'
+  activerecord:
+    models:
+      template:
+        one: 'Template'
+        other: 'Templates'
+    attributes:
+      template:
+        author: Author
+        is_hidden: Hidden?
+        name: Name
   templates:
     from_scratch: 'Create from Scratch'
     import_existing: 'Import Existing'

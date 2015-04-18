@@ -202,20 +202,22 @@ class ApplicationController < ActionController::Base
     options[:params] ||= {}
     options[:params].merge!(pa_params) unless pa_params.nil?
     activity = ar_instance.create_activity(options)
-    # form the actionmailer method name by combining the class name with the action being performed (e.g. "submission_update")
-    am_string = "#{ar_instance.class.name.downcase}_#{options[:action]}"
+    
+    # Get the name of the activity mailer by changing the dot to an underscore (eg "submission.update" to "submission_update")
+    am_string = activity.key.gsub(".", "_")
+
     # If ActivityMailer can find a method by the formulated name, pass in the activity (everything we know about what was done)
-    if ActivityMailer.respond_to?(am_string) && (options[:recipient].nil? || options[:owner].nil? || options[:recipient] != options[:owner])
+    if ActivityMailer.respond_to?(am_string) && !options[:recipient].nil? && !options[:owner].nil? && options[:recipient] != options[:owner]
       #fulfilling bamnet's expansive notification ambitions via metaprogramming since 2013
       begin
         ActivityMailer.send(am_string, activity).deliver
       #make an effort to catch all mail-related exceptions after sending the mail - IOError will catch anything for sendmail, SMTP for the rest
       rescue IOError, Net::SMTPAuthenticationError, Net::SMTPServerBusy, Net::SMTPSyntaxError, Net::SMTPFatalError, Net::SMTPUnknownError => e
         Rails.logger.debug "Mail delivery failed at #{Time.now.to_s} for #{options[:recipient]}: #{e.message}"
-        ConcertoConfig.first.create_activity :action => :system_notification, :params => {:message => t(:smtp_send_error)}
+        ConcertoConfig.first.create_activity action: :system_notification, params: {message: t(:smtp_send_error)}
       rescue OpenSSL::SSL::SSLError => e
         Rails.logger.debug "Mail delivery failed at #{Time.now.to_s} for #{options[:recipient]}: #{e.message} -- might need to disable SSL Verification in settings"
-        ConcertoConfig.first.create_activity :action => :system_notification, :params => {:message => t(:smtp_send_error_ssl)}
+        ConcertoConfig.first.create_activity action: :system_notification, params: {message: t(:smtp_send_error_ssl)}
       end
     end
 
@@ -261,11 +263,11 @@ class ApplicationController < ActionController::Base
   #Don't break for CanCan exceptions; send the user to the front page with a Flash error message
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
-      format.html {
-        redirect_to main_app.root_url, :flash => { :notice => exception.message }
+      format.json { render json: {error:true, status:403, message: exception.message}, status: :forbidden }
+      format.xml{ render xml: {error:true, status:403, message: exception.message}, status: :forbidden }
+      format.any {
+        redirect_to main_app.root_url, flash: { notice: exception.message }
       }
-      format.json { render :json => {:error=>true, :status=>403, :message => exception.message}, :status => :forbidden }
-      format.xml{ render :xml => {:error=>true, :status=>403, :message => exception.message}, :status => :forbidden }
     end
   end
 
@@ -381,7 +383,7 @@ class ApplicationController < ActionController::Base
      # applied before auth.
      relation.limit_value = nil
      relation.offset_value = [0,offset-(page-1)*per].max
-     return {:page => page, :per => per}
+     return {page: page, per: per}
     else
      # Not paginated, we don't need to do anything.
      return nil
@@ -426,7 +428,7 @@ class ApplicationController < ActionController::Base
   def process_notification_options(options = {})
     opts = {}
     opts[:params] = {
-      :owner_name => current_user.name
+      owner_name: current_user.name
     }
     opts[:owner] = current_user
     opts[:action] = action_name
