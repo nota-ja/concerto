@@ -61,7 +61,7 @@ gem 'bundler-audit', :require => false, :group => :test
 
 gem 'kaminari'
 
-gem 'sqlite3', :group => [:development, :test]
+gem 'sqlite3'
 
 gem 'mysql2', :group => :mysql
 gem 'pg', :group => :postgres

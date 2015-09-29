@@ -2,12 +2,13 @@
 
 set -x
 
+## run in development mode
+RACK_ENV=development
+RAILS_ENV=$RACK_ENV
+
 ## setup database
 bundle exec rake db:migrate
 bundle exec rake db:seed
-
-EX_PORT=$PORT
-env
 
 ## prepare logdir for clock & worker
 logdir=${HOME}/../logs/
